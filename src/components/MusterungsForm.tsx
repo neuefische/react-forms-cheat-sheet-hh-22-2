@@ -8,13 +8,18 @@ export default function MusterungsForm() {
     // false ist der default Wert - standardwert
     // checked = ✅
     // unchecked = ❌
+    //     State    Funktion um State zu bearbeiten
+
+    const [vorname, setVorname] = useState("Dominic")
+    const [name, setNachname] = useState("Destrait")
+    const [alter, setAlter] = useState(0)
     const [boxIsChecked, setBoxIsChecked] = useState(false)
 
     /*
     * Wie steuern wir Komponenten? #controlled components
     * */
 
-    function handleChange(changeEvent: ChangeEvent<HTMLInputElement>) {
+    function handleChangeOld(changeEvent: ChangeEvent<HTMLInputElement>) {
         const inputFeldName = changeEvent.target.name;
         const inputFeldType = changeEvent.target.type;
 
@@ -27,14 +32,42 @@ export default function MusterungsForm() {
 
             // Wir nehmen den Wert und drehen ihn um
             setBoxIsChecked(!boxIsChecked)
-            // Rein logisch, ginge das auch
-            // Wir nehmen den aktuellen Wert aus der Checkbox
-            setBoxIsChecked(inputFeldValue)
         } else {
             inputFeldValue = changeEvent.target.value;
-        }
 
-        console.log(`Input Name: ${inputFeldName} mit dem Wert ${inputFeldValue}`)
+            console.log(`${inputFeldName} = ${inputFeldValue}`)
+            console.log(`${inputFeldName} State = ${vorname}`)
+
+            // Der State "vorname" wird aktualisiert mit dem Value aus dem Input
+            setVorname(inputFeldValue)
+        }
+    }
+
+    function handleChange(changeEvent: ChangeEvent<HTMLInputElement>) {
+        // Unser Ziel:
+        // Welches Input-Feld muss aktualisiert werden?
+        const fieldName = changeEvent.target.name;
+        const fieldValue = changeEvent.target.value;
+        const fieldPlaceholder = changeEvent.target.placeholder;
+
+        console.log(changeEvent)
+
+        if(fieldName === "vorname") {
+            // Aktualisiere das jeweilige Input-Feld
+            setVorname(fieldValue)
+        }
+        if(fieldName === "nachname") {
+            // Aktualisiere das jeweilige Input-Feld
+            setNachname(fieldValue)
+        }
+        if(fieldName === "alter") {
+            // Aktualisiere das jeweilige Input-Feld
+            setAlter(Number(fieldValue))
+        }
+        if(fieldName === "agb") {
+            // Aktualisiere das jeweilige Input-Feld
+            setBoxIsChecked(changeEvent.target.checked)
+        }
     }
 
     // JSX = Custom HTML mit React
@@ -44,10 +77,14 @@ export default function MusterungsForm() {
             <form>
                 <label>
                     Vorname:
+                    {/* Das ist ein CONTROLLED COMPONENT*/}
+                    {/* Weil wir benutzen VALUE */}
+                    {/* VALUE bei input = CONTROLLED COMPONENT */}
                     <input
                         name="vorname"
                         placeholder="Darth"
                         type="text"
+                        value={vorname}
                         onChange={handleChange}
                     />
                 </label>
@@ -56,8 +93,9 @@ export default function MusterungsForm() {
                     Nachname:
                     <input
                         name="nachname"
-                        placeholder=""
+                        placeholder="Vader"
                         type="text"
+                        value={name}
                         onChange={handleChange}
                     />
                 </label>
@@ -68,6 +106,7 @@ export default function MusterungsForm() {
                         name="alter"
                         placeholder="18"
                         type="number"
+                        value={alter}
                         onChange={handleChange}
                     />
                 </label>
@@ -75,7 +114,7 @@ export default function MusterungsForm() {
                 <label>
                     Ich habe die AGB gelesen und bin einverstanden:
                     <input
-                        name="nachname"
+                        name="agb"
                         type="checkbox"
                         checked={boxIsChecked}
                         onChange={handleChange}
