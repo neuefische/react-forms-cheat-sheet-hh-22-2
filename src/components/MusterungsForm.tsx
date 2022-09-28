@@ -1,4 +1,5 @@
-import React, {ChangeEvent, useState} from "react";
+import axios from "axios";
+import React, {ChangeEvent, FormEvent, useState} from "react";
 import "./MusterungsForm.css"
 
 // Standardfunktion für eine React-Komponente
@@ -10,10 +11,19 @@ export default function MusterungsForm() {
     // unchecked = ❌
     //     State    Funktion um State zu bearbeiten
 
-    const [vorname, setVorname] = useState("Dominic")
-    const [name, setNachname] = useState("Destrait")
-    const [alter, setAlter] = useState(0)
-    const [boxIsChecked, setBoxIsChecked] = useState(false)
+    // const [vorname, setVorname] = useState("Dominic")
+    // const [name, setNachname] = useState("Destrait")
+    // const [alter, setAlter] = useState(0)
+    // const [boxIsChecked, setBoxIsChecked] = useState(false)
+
+    // Verpacke den State in EIN Objekt
+    const leereForm = {
+        vorname: "",
+        name: "",
+        alter: 0,
+        agb: false
+    }
+    const [musterungsForm, setMusterungsForm] = useState(leereForm)
 
     /*
     * Wie steuern wir Komponenten? #controlled components
@@ -31,15 +41,15 @@ export default function MusterungsForm() {
             inputFeldValue = changeEvent.target.checked;
 
             // Wir nehmen den Wert und drehen ihn um
-            setBoxIsChecked(!boxIsChecked)
+            // setBoxIsChecked(!boxIsChecked)
         } else {
             inputFeldValue = changeEvent.target.value;
 
             console.log(`${inputFeldName} = ${inputFeldValue}`)
-            console.log(`${inputFeldName} State = ${vorname}`)
+            // console.log(`${inputFeldName} State = ${vorname}`)
 
             // Der State "vorname" wird aktualisiert mit dem Value aus dem Input
-            setVorname(inputFeldValue)
+            // setVorname(inputFeldValue)
         }
     }
 
@@ -48,33 +58,53 @@ export default function MusterungsForm() {
         // Welches Input-Feld muss aktualisiert werden?
         const fieldName = changeEvent.target.name;
         const fieldValue = changeEvent.target.value;
-        const fieldPlaceholder = changeEvent.target.placeholder;
+        const fieldType = changeEvent.target.type;
 
-        console.log(changeEvent)
+        // setMusterungsForm <- Funktionsaufruf um State zu aktualisieren
+        //   Arrow Function -> Ruft eine tieferliegende Funktion auf
+        //   Mit "dieAlteMusterungsForm" nehmen wir die alte Form
+        //   "...dieAlteMusterungsForm" kopiert alle Werte
+        //   Aktualisiere NUR das Attribut DAS sich verändert hat
+        //   [changeEvent.target.name]: changeEvent.target.value
 
-        if(fieldName === "vorname") {
-            // Aktualisiere das jeweilige Input-Feld
-            setVorname(fieldValue)
-        }
-        if(fieldName === "nachname") {
-            // Aktualisiere das jeweilige Input-Feld
-            setNachname(fieldValue)
-        }
-        if(fieldName === "alter") {
-            // Aktualisiere das jeweilige Input-Feld
-            setAlter(Number(fieldValue))
-        }
-        if(fieldName === "agb") {
-            // Aktualisiere das jeweilige Input-Feld
-            setBoxIsChecked(changeEvent.target.checked)
-        }
+        // Erklärung zu Fragezeichen und Doppelpunkt
+        // https://www.w3schools.com/react/react_es6_ternary.asp
+        setMusterungsForm(
+            dieAlteMusterungsForm => ({
+                ...dieAlteMusterungsForm,
+                [changeEvent.target.name]:
+                    fieldType === "checkbox" ? changeEvent.target.checked
+                        : changeEvent.target.value
+            }))
+    }
+
+    function handleSubmit(event: FormEvent<HTMLFormElement>) {
+        // Das MUSS hier stehen (in dieser Funktion)
+        event.preventDefault()
+
+        console.log("handleSubmit ", musterungsForm)
+
+        // Jetzt kommt die normale Logik
+        // Z.B. Daten verschicken
+        axios.post('/hier/steht/unsere/api', {
+            musterungsForm
+        })
+            .then(function (response) {
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        
+        // Form zurücksetzen
+        setMusterungsForm(leereForm)
     }
 
     // JSX = Custom HTML mit React
     return (
         <div className="">
             {/* "form" Tag ist unser Form-Dokument */}
-            <form>
+            <form onSubmit={handleSubmit}>
                 <label>
                     Vorname:
                     {/* Das ist ein CONTROLLED COMPONENT*/}
@@ -84,7 +114,7 @@ export default function MusterungsForm() {
                         name="vorname"
                         placeholder="Darth"
                         type="text"
-                        value={vorname}
+                        value={musterungsForm.vorname}
                         onChange={handleChange}
                     />
                 </label>
@@ -92,10 +122,10 @@ export default function MusterungsForm() {
                 <label>
                     Nachname:
                     <input
-                        name="nachname"
+                        name="name"
                         placeholder="Vader"
                         type="text"
-                        value={name}
+                        value={musterungsForm.name}
                         onChange={handleChange}
                     />
                 </label>
@@ -106,7 +136,7 @@ export default function MusterungsForm() {
                         name="alter"
                         placeholder="18"
                         type="number"
-                        value={alter}
+                        value={musterungsForm.alter}
                         onChange={handleChange}
                     />
                 </label>
@@ -116,10 +146,12 @@ export default function MusterungsForm() {
                     <input
                         name="agb"
                         type="checkbox"
-                        checked={boxIsChecked}
+                        checked={musterungsForm.agb}
                         onChange={handleChange}
                     />
                 </label>
+
+                <button>Formular senden</button>
             </form>
         </div>
     );
