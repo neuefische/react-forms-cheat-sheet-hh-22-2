@@ -4,6 +4,8 @@ import "./MusterungsForm.css"
 
 // Standardfunktion für eine React-Komponente
 export default function MusterungsForm() {
+    // Vorher:
+    
     // stateName, setStateName
     // currywurst, setCurrywurst
     // false ist der default Wert - standardwert
@@ -16,7 +18,7 @@ export default function MusterungsForm() {
     // const [alter, setAlter] = useState(0)
     // const [boxIsChecked, setBoxIsChecked] = useState(false)
 
-    // Verpacke den State in EIN Objekt
+    // Nacher: (Wir verpacken den State in EIN Objekt)
     const leereForm = {
         vorname: "",
         name: "",
@@ -24,35 +26,8 @@ export default function MusterungsForm() {
         agb: false
     }
     const [musterungsForm, setMusterungsForm] = useState(leereForm)
-
-    /*
-    * Wie steuern wir Komponenten? #controlled components
-    * */
-
-    function handleChangeOld(changeEvent: ChangeEvent<HTMLInputElement>) {
-        const inputFeldName = changeEvent.target.name;
-        const inputFeldType = changeEvent.target.type;
-
-        let inputFeldValue;
-
-        // Spezialfall! Bei Checkboxen muss man das Attribut "checked" abfragen um an den Wert zu kommen
-        if (inputFeldType === "checkbox") {
-            // ein boolean (true oder false)
-            inputFeldValue = changeEvent.target.checked;
-
-            // Wir nehmen den Wert und drehen ihn um
-            // setBoxIsChecked(!boxIsChecked)
-        } else {
-            inputFeldValue = changeEvent.target.value;
-
-            console.log(`${inputFeldName} = ${inputFeldValue}`)
-            // console.log(`${inputFeldName} State = ${vorname}`)
-
-            // Der State "vorname" wird aktualisiert mit dem Value aus dem Input
-            // setVorname(inputFeldValue)
-        }
-    }
-
+    
+    
     function handleChange(changeEvent: ChangeEvent<HTMLInputElement>) {
         // Unser Ziel:
         // Welches Input-Feld muss aktualisiert werden?
